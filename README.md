@@ -7,7 +7,6 @@
 - Clean, distraction-free interface
 - Visual breathing guide with an expanding/contracting circle
 - Dark mode toggle with preference saving
-- Customizable breathing patterns
 - Notification reminders to practice breathing
 - Mobile-friendly design
 
