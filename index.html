@@ -3,112 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4-7-8 Breathing App</title>
-    <style>
-        :root {
-            --bg-color: #e6f3ff;
-            --text-color: #2c3e50;
-            --container-bg: #ffffff;
-            --circle-color: #a9cce3;
-            --button-color: #3498db;
-            --button-hover: #2980b9;
-            --title-color: #3498db;
-            --footer-bg: #f0f0f0;
-        }
-        .dark-mode {
-            --bg-color: #2c3e50;
-            --text-color: #ecf0f1;
-            --container-bg: #34495e;
-            --circle-color: #2980b9;
-            --button-color: #3498db;
-            --button-hover: #2980b9;
-            --title-color: #3498db;
-            --footer-bg: #2c3e50;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .container {
-            text-align: center;
-            background-color: var(--container-bg);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 100%;
-            transition: background-color 0.3s ease;
-            margin-bottom: 2rem;
-        }
-        h1 {
-            color: var(--title-color);
-            margin-bottom: 1.5rem;
-        }
-        button {
-            font-size: 1.2rem;
-            padding: 0.7rem 1.5rem;
-            margin: 0.5rem;
-            cursor: pointer;
-            background-color: var(--button-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: var(--button-hover);
-        }
-        #circle-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 2rem auto;
-        }
-        #circle {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-color: var(--circle-color);
-            transition: transform 0.1s ease-in-out, background-color 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #timer {
-            font-size: 3rem;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-        #instruction {
-            font-size: 1.5rem;
-            margin: 1rem 0;
-            height: 2em;
-        }
-        #dark-mode-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            cursor: pointer;
-        }
-        footer {
-            background-color: var(--footer-bg);
-            width: 100%;
-            text-align: center;
-            padding: 1rem 0;
-            transition: background-color 0.3s ease;
-        }
-    </style>
+    <title>4-7-8 Breathing</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -121,140 +17,29 @@
         <button id="startBtn">Start</button>
         <button id="stopBtn" style="display: none;">Stop</button>
     </div>
-    <div id="dark-mode-toggle">🌓</div>
-    <footer>
-        <!-- Ko-Fi button will be inserted here by the script -->
-    </footer>
 
-    <script>
-        const timer = document.getElementById('timer');
-        const instruction = document.getElementById('instruction');
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const circle = document.getElementById('circle');
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
+    <div id="sidebar" class="sidebar">
+        <button id="closeBtn" class="close-btn">&times;</button>
+        <h3>Settings</h3>
+        <div class="sidebar-content">
+            <div class="setting">
+                <label for="darkModeToggle">Dark Mode</label>
+                <input type="checkbox" id="darkModeToggle" class="styled-checkbox">
+            </div>
+            <div class="setting">
+                <label for="notificationInterval">Pop-Up Reminder (hours)</label>
+                <input type="number" id="notificationInterval" min="1" max="24" value="1">
+            </div>
+        </div>
+        <div class="support-us">
+            <h4 id="donateToggle">Donate</h4>
+            <div id="donateContent" style="display: none;">
+                <iframe id='kofiframe' src='https://ko-fi.com/wolfeseidr/?hidefeed=true&widget=true&embed=true&preview=true' style='border:none;width:100%;padding:4px;background:#f9f9f9;' height='712' title='wolfeseidr'></iframe>
+            </div>
+        </div>
+    </div>
+    <button id="openBtn" class="open-btn">☰</button>
 
-        let interval;
-        let phase = 0;
-        let time = 0;
-        let animationFrame;
-
-        const phases = [
-            { duration: 4, instruction: 'Inhale through your nose', startScale: 1, endScale: 1.5 },
-            { duration: 7, instruction: 'Hold your breath', startScale: 1.5, endScale: 1.5 },
-            { duration: 8, instruction: 'Exhale through your mouth', startScale: 1.5, endScale: 1 }
-        ];
-
-        function updateCircle(progress) {
-            const currentPhase = phases[phase];
-            const scale = currentPhase.startScale + (currentPhase.endScale - currentPhase.startScale) * progress;
-            circle.style.transform = `scale(${scale})`;
-        }
-
-        function animateCircle(startTime, duration) {
-            const now = performance.now();
-            const progress = Math.min((now - startTime) / (duration * 1000), 1);
-            updateCircle(progress);
-
-            if (progress < 1) {
-                animationFrame = requestAnimationFrame(() => animateCircle(startTime, duration));
-            }
-        }
-
-        function updateTimer() {
-            if (time > 0) {
-                time--;
-                timer.textContent = time;
-            } else {
-                clearInterval(interval);
-                phase = (phase + 1) % 3;
-                instruction.textContent = "Get ready...";
-                circle.style.transform = `scale(${phases[phase].startScale})`;
-                
-                setTimeout(() => {
-                    time = phases[phase].duration;
-                    instruction.textContent = phases[phase].instruction;
-                    timer.textContent = time;
-                    animateCircle(performance.now(), phases[phase].duration);
-                    interval = setInterval(updateTimer, 1000);
-                }, 1000); // 1-second pause between phases
-            }
-        }
-
-        function startBreathing() {
-            startBtn.style.display = 'none';
-            stopBtn.style.display = 'inline-block';
-            phase = 0;
-            instruction.textContent = "Prepare to begin...";
-            circle.style.transform = 'scale(1)';
-            
-            setTimeout(() => {
-                time = phases[0].duration;
-                instruction.textContent = phases[0].instruction;
-                timer.textContent = time;
-                animateCircle(performance.now(), phases[0].duration);
-                interval = setInterval(updateTimer, 1000);
-            }, 3000); // 3-second delay before starting
-        }
-
-        function stopBreathing() {
-            clearInterval(interval);
-            cancelAnimationFrame(animationFrame);
-            startBtn.style.display = 'inline-block';
-            stopBtn.style.display = 'none';
-            timer.textContent = '0';
-            instruction.textContent = 'Click Start to begin';
-            circle.style.transform = 'scale(1)';
-        }
-
-        startBtn.addEventListener('click', startBreathing);
-        stopBtn.addEventListener('click', stopBreathing);
-
-        // Dark mode toggle
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        }
-
-        darkModeToggle.addEventListener('click', toggleDarkMode);
-
-        // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-        }
-
-        // Notification feature
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                Notification.requestPermission();
-            }
-        }
-
-        function scheduleNotification() {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                setTimeout(() => {
-                    new Notification('Breathing Reminder', {
-                        body: 'Time to check in with your breathing!',
-                        icon: '/api/placeholder/64/64'
-                    });
-                    scheduleNotification();
-                }, 3600000); // Remind every hour (3600000 ms)
-            }
-        }
-
-        requestNotificationPermission();
-        scheduleNotification();
-    </script>
-
-    <!-- Ko-Fi Widget Script -->
-    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
-    <script>
-      kofiWidgetOverlay.draw('wolfeseidr', {
-        'type': 'floating-chat',
-        'floating-chat.donateButton.text': 'Donate',
-        'floating-chat.donateButton.background-color': '#00b9fe',
-        'floating-chat.donateButton.text-color': '#fff'
-      });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
