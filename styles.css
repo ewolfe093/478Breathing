@@ -9,6 +9,7 @@
     --title-color: #3498db;
     --sidebar-bg: #f0f0f0;
     --sidebar-text: #2c3e50;
+    --sidebar-icon: #3498db;
 }
 
 .dark-mode {
@@ -22,36 +23,41 @@
     --title-color: #3498db;
     --sidebar-bg: #2c3e50;
     --sidebar-text: #ecf0f1;
+    --sidebar-icon: #ecf0f1;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+body, html {
     margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
 .container {
-    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
     background-color: var(--container-bg);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    max-width: 400px;
-    width: 100%;
     transition: background-color 0.3s ease;
-    margin-bottom: 2rem;
 }
 
 h1 {
     color: var(--title-color);
     margin-bottom: 1.5rem;
+    font-size: 2rem;
 }
 
 button {
@@ -72,8 +78,10 @@ button:hover {
 
 #circle-container {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 50vmin;
+    height: 50vmin;
+    max-width: 200px;
+    max-height: 200px;
     margin: 2rem auto;
 }
 
@@ -105,13 +113,15 @@ button:hover {
     font-size: 1.5rem;
     margin: 1rem 0;
     height: 2em;
+    text-align: center;
 }
 
 .sidebar {
     position: fixed;
-    right: -320px;
+    right: -100%;
     top: 0;
-    width: 300px;
+    width: 80%;
+    max-width: 300px;
     height: 100%;
     background-color: var(--sidebar-bg);
     color: var(--sidebar-text);
@@ -121,6 +131,7 @@ button:hover {
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 .sidebar.open {
@@ -141,6 +152,7 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--sidebar-text);
 }
 
 .open-btn {
@@ -158,11 +170,14 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--sidebar-icon);
 }
 
 .sidebar-content {
     flex-grow: 1;
     margin-top: 40px;
+    display: flex;
+    flex-direction: column;
 }
 
 .setting {
@@ -210,14 +225,13 @@ button:hover {
 /* Support Us Section */
 .support-us {
     margin-top: auto;
-    padding-top: 20px;
+    padding: 20px 0;
     border-top: 1px solid var(--text-color);
 }
 
 #donateToggle {
     cursor: pointer;
     user-select: none;
-	padding-bottom: 1em;
 }
 
 #donateToggle::after {
@@ -237,4 +251,28 @@ button:hover {
 
 #donateContent.expanded {
     max-height: 712px; /* Match the iframe height */
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    #circle-container {
+        width: 70vmin;
+        height: 70vmin;
+    }
+
+    #timer {
+        font-size: 2.5rem;
+    }
+
+    #instruction {
+        font-size: 1.2rem;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
 }

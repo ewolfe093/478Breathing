@@ -7,34 +7,36 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>4-7-8 Breathing</h1>
-        <div id="circle-container">
-            <div id="circle"></div>
-            <div id="timer">0</div>
+    <div class="app-container">
+        <div class="container">
+            <h1>4-7-8 Breathing</h1>
+            <div id="circle-container">
+                <div id="circle"></div>
+                <div id="timer">0</div>
+            </div>
+            <div id="instruction">Click Start to begin</div>
+            <button id="startBtn">Start</button>
+            <button id="stopBtn" style="display: none;">Stop</button>
         </div>
-        <div id="instruction">Click Start to begin</div>
-        <button id="startBtn">Start</button>
-        <button id="stopBtn" style="display: none;">Stop</button>
-    </div>
 
-    <div id="sidebar" class="sidebar">
-        <button id="closeBtn" class="close-btn">&times;</button>
-        <h3>Settings</h3>
-        <div class="sidebar-content">
-            <div class="setting">
-                <label for="darkModeToggle">Dark Mode</label>
-                <input type="checkbox" id="darkModeToggle" class="styled-checkbox">
-            </div>
-            <div class="setting">
-                <label for="notificationInterval">Pop-Up Reminder (hours)</label>
-                <input type="number" id="notificationInterval" min="1" max="24" value="1">
-            </div>
-        </div>
-        <div class="support-us">
-            <h4 id="donateToggle">Donate</h4>
-            <div id="donateContent" style="display: none;">
-                <iframe id='kofiframe' src='https://ko-fi.com/wolfeseidr/?hidefeed=true&widget=true&embed=true&preview=true' style='border:none;width:100%;padding:4px;background:#f9f9f9;' height='712' title='wolfeseidr'></iframe>
+        <div id="sidebar" class="sidebar">
+            <button id="closeBtn" class="close-btn">&times;</button>
+            <h3>Settings</h3>
+            <div class="sidebar-content">
+                <div class="setting">
+                    <label for="darkModeToggle">Dark Mode</label>
+                    <input type="checkbox" id="darkModeToggle" class="styled-checkbox">
+                </div>
+                <div class="setting">
+                    <label for="notificationInterval">Notifications (hours)</label>
+                    <input type="number" id="notificationInterval" min="1" max="24" value="1">
+                </div>
+                <div class="support-us">
+                    <h4 id="donateToggle">Donate</h4>
+                    <div id="donateContent" style="display: none;">
+                        <iframe id='kofiframe' src='https://ko-fi.com/wolfeseidr/?hidefeed=true&widget=true&embed=true&preview=true' style='border:none;width:100%;padding:4px;background:#f9f9f9;' height='712' title='wolfeseidr'></iframe>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

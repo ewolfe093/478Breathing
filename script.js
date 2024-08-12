@@ -46,7 +46,7 @@ function updateTimer() {
     } else {
         clearInterval(interval);
         phase = (phase + 1) % 3;
-        instruction.textContent = "Get Ready...";
+        instruction.textContent = "Wait...";
         circle.style.transform = `scale(${phases[phase].startScale})`;
         
         setTimeout(() => {
