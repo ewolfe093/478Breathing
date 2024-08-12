@@ -13,7 +13,7 @@
 
 ## Usage
 
-Visit [478Breathing](https://ewolfe093.github.io/478breathing) to use the app directly in your web browser.
+Visit [478Breathing](https://ewolfe093.github.io/478Breathing) to use the app directly in your web browser.
 
 ### Mobile Users
 
