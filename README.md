@@ -1,4 +1,4 @@
-# 478Breathing
+# 4-7-8 Breathing
 
 478Breathing is a simple, user-friendly web application designed to guide users through the 4-7-8 breathing technique. This technique is known for its potential to reduce anxiety, help with sleep, and promote overall relaxation.
 
