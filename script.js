@@ -10,12 +10,14 @@ const darkModeToggle = document.getElementById('darkModeToggle');
 const notificationInterval = document.getElementById('notificationInterval');
 const donateToggle = document.getElementById('donateToggle');
 const donateContent = document.getElementById('donateContent');
+const transitionDelay = 1000;
 
 let interval;
 let phase = 0;
 let time = 0;
 let animationFrame;
 let notificationTimeout;
+let isTransitioning = false;
 
 const phases = [
     { duration: 4, instruction: 'Inhale...', startScale: 1, endScale: 1.5 },
@@ -60,10 +62,16 @@ function updateTimer() {
 }
 
 function startBreathing() {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    
+    startBtn.disabled = true;
+    stopBtn.disabled = true;
+    
     startBtn.style.display = 'none';
     stopBtn.style.display = 'inline-block';
     phase = 0;
-    instruction.textContent = "Get Ready...";
+    instruction.textContent = "Prepare to begin...";
     circle.style.transform = 'scale(1)';
     
     setTimeout(() => {
@@ -72,10 +80,19 @@ function startBreathing() {
         timer.textContent = time;
         animateCircle(performance.now(), phases[0].duration);
         interval = setInterval(updateTimer, 1000);
-    }, 3000); // 3-second delay before starting
+        
+        stopBtn.disabled = false;
+        isTransitioning = false;
+    }, 2000); // 2-second delay before starting
 }
 
 function stopBreathing() {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    
+    startBtn.disabled = true;
+    stopBtn.disabled = true;
+    
     clearInterval(interval);
     cancelAnimationFrame(animationFrame);
     startBtn.style.display = 'inline-block';
@@ -83,6 +100,11 @@ function stopBreathing() {
     timer.textContent = '0';
     instruction.textContent = 'Click Start to begin';
     circle.style.transform = 'scale(1)';
+    
+    setTimeout(() => {
+        startBtn.disabled = false;
+        isTransitioning = false;
+    }, transitionDelay);
 }
 
 function toggleSidebar() {
@@ -113,8 +135,18 @@ function requestNotificationPermission() {
     }
 }
 
-startBtn.addEventListener('click', startBreathing);
-stopBtn.addEventListener('click', stopBreathing);
+startBtn.addEventListener('click', () => {
+    if (!isTransitioning) {
+        startBreathing();
+    }
+});
+
+stopBtn.addEventListener('click', () => {
+    if (!isTransitioning) {
+        stopBreathing();
+    }
+});
+
 openBtn.addEventListener('click', toggleSidebar);
 closeBtn.addEventListener('click', toggleSidebar);
 

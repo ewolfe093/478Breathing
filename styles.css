@@ -76,6 +76,11 @@ button:hover {
     background-color: var(--button-hover);
 }
 
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
 #circle-container {
     position: relative;
     width: 50vmin;
