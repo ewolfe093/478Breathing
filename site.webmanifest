@@ -1,6 +1,10 @@
 {
   "name": "4-7-8 Breathing",
-  "short_name": "478Breath",
+  "short_name": "478Breathe",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3498db",
   "icons": [
     {
       "src": "icons/android-192x192.png",
@@ -12,8 +16,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  ]
 }
