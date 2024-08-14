@@ -1,3 +1,4 @@
+// Main doc consts
 const timer = document.getElementById('timer');
 const instruction = document.getElementById('instruction');
 const startBtn = document.getElementById('startBtn');
@@ -6,44 +7,50 @@ const circle = document.getElementById('circle');
 const sidebar = document.getElementById('sidebar');
 const openBtn = document.getElementById('openBtn');
 const closeBtn = document.getElementById('closeBtn');
+const breathingTitle = document.getElementById('breathingTitle');
+
+// Settings doc consts
 const darkModeToggle = document.getElementById('darkModeToggle');
 const notificationInterval = document.getElementById('notificationInterval');
-const donateToggle = document.getElementById('donateToggle');
-const donateContent = document.getElementById('donateContent');
 const breathingPatternSelect = document.getElementById('breathingPattern');
 const customPatternControls = document.getElementById('customPatternControls');
 const inhaleTime = document.getElementById('inhaleTime');
 const hold1Time = document.getElementById('hold1Time');
 const exhaleTime = document.getElementById('exhaleTime');
 const hold2Time = document.getElementById('hold2Time');
-const breathingTitle = document.getElementById('breathingTitle');
-
 const hapticFeedbackToggle = document.getElementById('hapticFeedback');
 const soundCuesToggle = document.getElementById('soundCues');
 
+// Donate doc consts
+const donateToggle = document.getElementById('donateToggle');
+const donateContent = document.getElementById('donateContent');
+
+// Consts
 const inhaleSound = new Audio('audio/inhale-voice.wav');
 const exhaleSound = new Audio('audio/exhale-voice.wav');
 const holdSound = new Audio('audio/hold-voice.wav');
-
 const transitionDelay = 1000;
 
+// Variables
 let interval;
 let phase = 0;
 let time = 0;
 let animationFrame;
 let notificationTimeout;
+let hasPromptedForNotification = false;
 let isTransitioning = false;
-
 let phases = [
     { duration: 4, instruction: 'Inhale...', startScale: 1, endScale: 1.5 },
     { duration: 7, instruction: 'Hold...', startScale: 1.5, endScale: 1.5 },
     { duration: 8, instruction: 'Exhale...', startScale: 1.5, endScale: 1 }
 ];
 
+// === FUNCTIONS ===
+// Circle
 function updateCircle(progress) {
     const currentPhase = phases[phase];
-	const maxScale = 1.5;
-	const scale = Math.min(
+    const maxScale = 1.5;
+    const scale = Math.min(
         currentPhase.startScale + (currentPhase.endScale - currentPhase.startScale) * progress,
         maxScale
     );
@@ -60,26 +67,25 @@ function animateCircle(startTime, duration) {
     }
 }
 
+// Interval Timers
 function updateTimer() {
     if (time > 0) {
         time--;
         timer.textContent = time;
-		vibrateIfEnabled(100);
+        vibrateIfEnabled(100);
     } else {
         clearInterval(interval);
         phase = (phase + 1) % phases.length;
-        //instruction.textContent = "Wait...";
         circle.style.transform = `scale(${phases[phase].startScale})`;
         vibrateIfEnabled(300);
-		
+        
         setTimeout(() => {
             time = phases[phase].duration;
             instruction.textContent = phases[phase].instruction;
             timer.textContent = time;
-			playSound(phases[phase].instruction);
+            playSound(phases[phase].instruction);
             animateCircle(performance.now(), phases[phase].duration);
             interval = setInterval(updateTimer, 1000);
-			
         }, 500); // 0.5-second pause between phases
     }
 }
@@ -97,11 +103,11 @@ function startBreathing() {
     circle.style.transform = 'scale(1)';
     
     setTimeout(() => {
-		phase = 0;
+        phase = 0;
         time = phases[0].duration;
         instruction.textContent = phases[0].instruction;
         timer.textContent = time;
-		playSound(phases[0].instruction);
+        playSound(phases[0].instruction);
         animateCircle(performance.now(), phases[0].duration);
         interval = setInterval(updateTimer, 1000);
         
@@ -131,13 +137,14 @@ function stopBreathing() {
     }, transitionDelay);
 }
 
+// Settings Functions
 function toggleSidebar() {
     sidebar.classList.toggle('open');
 }
 
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', darkModeToggle.checked);
+    savePreferences();
 }
 
 function scheduleNotification() {
@@ -154,78 +161,24 @@ function scheduleNotification() {
 }
 
 function requestNotificationPermission() {
-    if ('Notification' in window) {
-        Notification.requestPermission();
+    if ('Notification' in window && !hasPromptedForNotification) {
+        hasPromptedForNotification = true;
+        Notification.requestPermission().then(function(permission) {
+            if (permission === "granted") {
+                console.log("Notification permission granted.");
+                scheduleNotification();
+            } else {
+                console.log("Notification permission denied.");
+            }
+        });
     }
 }
-
-startBtn.addEventListener('click', () => {
-    if (!isTransitioning) {
-        startBreathing();
-    }
-});
-
-stopBtn.addEventListener('click', () => {
-    if (!isTransitioning) {
-        stopBreathing();
-    }
-});
-
-openBtn.addEventListener('click', toggleSidebar);
-closeBtn.addEventListener('click', toggleSidebar);
-
-darkModeToggle.checked = localStorage.getItem('darkMode') === 'true';
-darkModeToggle.addEventListener('change', toggleDarkMode);
-
-notificationInterval.value = localStorage.getItem('notificationInterval') || 1;
-notificationInterval.addEventListener('change', () => {
-    localStorage.setItem('notificationInterval', notificationInterval.value);
-    scheduleNotification();
-});
-
-donateToggle.addEventListener('click', () => {
-    donateToggle.classList.toggle('expanded');
-    donateContent.classList.toggle('expanded');
-    donateContent.style.display = donateContent.classList.contains('expanded') ? 'block' : 'none';
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-        darkModeToggle.checked = true;
-    }
-    scheduleNotification();
-    requestNotificationPermission();
-});
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/478Breathing/sw.js').then(function(registration) {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}
-
-breathingPatternSelect.addEventListener('change', function() {
-    if (this.value === 'custom') {
-        customPatternControls.style.display = 'flex';
-    } else {
-        customPatternControls.style.display = 'none';
-        updateBreathingPattern(this.value);
-    }
-	updateBreathingPattern(this.value);
-});
-
-[inhaleTime, hold1Time, exhaleTime, hold2Time].forEach(input => {
-	input.addEventListener('change', () => {
-		updateBreathingPattern('custom');
-	});
-});
 
 function updateBreathingPattern(pattern) {
     let title;
+    const maxDuration = 5; // Maximum duration for full scale
+    const maxScale = 1.5; // Maximum scale factor
+
     switch(pattern) {
         case '4-7-8':
             title = '4-7-8 Breathing';
@@ -280,7 +233,6 @@ function updateBreathingPattern(pattern) {
             phases = phases.filter(phase => phase.duration > 0);
             break;
     }
-		
     
     // Update the title
     breathingTitle.textContent = title;
@@ -293,6 +245,8 @@ function updateBreathingPattern(pattern) {
     instruction.textContent = 'Click Start to begin';
     timer.textContent = '0';
     circle.style.transform = 'scale(1)';
+
+    savePreferences();
 }
 
 function vibrateIfEnabled(duration) {
@@ -303,13 +257,119 @@ function vibrateIfEnabled(duration) {
 
 function playSound(instruction) {
     if (soundCuesToggle.checked) {
-			//Sound Play
-		if (instruction.includes('Inhale')) {
-			inhaleSound.play();
-		} else if (instruction.includes('Hold')) {
-			holdSound.play();
-		} else if (instruction.includes('Exhale')) {
-			exhaleSound.play();
-		}
+        if (instruction.includes('Inhale')) {
+            inhaleSound.play();
+        } else if (instruction.includes('Hold')) {
+            holdSound.play();
+        } else if (instruction.includes('Exhale')) {
+            exhaleSound.play();
+        }
     }
+}
+
+// === SAVE/LOAD ===
+function savePreferences() {
+    localStorage.setItem('darkMode', darkModeToggle.checked);
+    localStorage.setItem('notificationInterval', notificationInterval.value);
+    localStorage.setItem('breathingPattern', breathingPatternSelect.value);
+    localStorage.setItem('hapticFeedback', hapticFeedbackToggle.checked);
+    localStorage.setItem('soundCues', soundCuesToggle.checked);
+    
+    // For custom pattern
+    if (breathingPatternSelect.value === 'custom') {
+        localStorage.setItem('customInhale', inhaleTime.value);
+        localStorage.setItem('customHold1', hold1Time.value);
+        localStorage.setItem('customExhale', exhaleTime.value);
+        localStorage.setItem('customHold2', hold2Time.value);
+    }
+	console.log("Preferences Saved!!");
+}
+
+function loadPreferences() {
+    darkModeToggle.checked = localStorage.getItem('darkMode') === 'true';
+    if (darkModeToggle.checked) {
+        document.body.classList.add('dark-mode');
+    }
+    
+    hapticFeedbackToggle.checked = localStorage.getItem('hapticFeedback') === 'true';
+    soundCuesToggle.checked = localStorage.getItem('soundCues') === 'true';
+    notificationInterval.value = localStorage.getItem('notificationInterval') || '1';
+    
+    const savedPattern = localStorage.getItem('breathingPattern') || '4-7-8';
+    breathingPatternSelect.value = savedPattern;
+    if (savedPattern === 'custom') {
+        customPatternControls.style.display = 'flex';
+        inhaleTime.value = localStorage.getItem('customInhale') || '4';
+        hold1Time.value = localStorage.getItem('customHold1') || '0';
+        exhaleTime.value = localStorage.getItem('customExhale') || '4';
+        hold2Time.value = localStorage.getItem('customHold2') || '0';
+    } else {
+        customPatternControls.style.display = 'none';
+    }
+    updateBreathingPattern(savedPattern);
+}
+
+// === EVENT LISTENERS ===
+// Start/Stop Button
+startBtn.addEventListener('click', startBreathing);
+stopBtn.addEventListener('click', stopBreathing);
+
+// Settings 
+openBtn.addEventListener('click', toggleSidebar);
+closeBtn.addEventListener('click', toggleSidebar);
+
+darkModeToggle.addEventListener('change', toggleDarkMode);
+
+notificationInterval.addEventListener('change', () => {
+    if (Notification.permission !== "granted") {
+        requestNotificationPermission();
+    } else {
+        scheduleNotification();
+    }
+    savePreferences();
+});
+
+hapticFeedbackToggle.addEventListener('change', savePreferences);
+soundCuesToggle.addEventListener('change', savePreferences);
+
+breathingPatternSelect.addEventListener('change', function() {
+    if (this.value === 'custom') {
+        customPatternControls.style.display = 'flex';
+    } else {
+        customPatternControls.style.display = 'none';
+    }
+    updateBreathingPattern(this.value);
+});
+
+[inhaleTime, hold1Time, exhaleTime, hold2Time].forEach(input => {
+    input.addEventListener('change', () => {
+        updateBreathingPattern('custom');
+    });
+});
+
+donateToggle.addEventListener('click', () => {
+    donateToggle.classList.toggle('expanded');
+    donateContent.classList.toggle('expanded');
+    donateContent.style.display = donateContent.classList.contains('expanded') ? 'block' : 'none';
+});
+
+// === INITIALIZATION ===
+document.addEventListener('DOMContentLoaded', () => {
+    loadPreferences();
+    scheduleNotification();
+    
+    if (Notification.permission !== "granted") {
+        requestNotificationPermission();
+    }
+});
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/478Breathing/sw.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    });
 }
