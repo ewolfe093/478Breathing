@@ -15,14 +15,14 @@ Visit [478Breathing](https://ewolfe093.github.io/478Breathing) to use the app di
 To save 478Breathing as an app on your mobile device:
 
 #### For iOS:
-1. Open Safari and visit the 478Breathing website.
+1. Open browser (e.g., Safari) and visit the 478Breathing website.
 2. Tap the Share button (the square with an arrow pointing upward).
 3. Scroll down and tap "Add to Home Screen".
 4. Name the app and tap "Add".
 
 #### For Android:
-1. Open Chrome and visit the 478Breathing website.
-2. Tap the three-dot menu in the upper right corner.
+1. Open browser (e.g., Chrome) and visit the 478Breathing website.
+2. Tap the three-dot menu in the upper/lower right corner.
 3. Tap "Add to Home screen".
 4. Name the app and tap "Add".
 
