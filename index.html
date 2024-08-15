@@ -19,12 +19,12 @@
 <body>
     <div class="app-container">
         <div class="container">
-            <h1>4-7-8 Breathing</h1>
+            <h1 id="breathingTitle">4-7-8 Breathing</h1>
             <div id="circle-container">
                 <div id="circle"></div>
                 <div id="timer">0</div>
+				<div id="instruction">Click Start to begin</div>
             </div>
-            <div id="instruction">Click Start to begin</div>
             <button id="startBtn">Start</button>
             <button id="stopBtn" style="display: none;">Stop</button>
         </div>
@@ -34,6 +34,23 @@
             <h3>Settings</h3>
             <div class="sidebar-content">
                 <div class="setting">
+					<label for="breathingPattern">Breathing Pattern</label>
+					<select id="breathingPattern">
+						<option value="4-7-8">4-7-8</option>
+						<option value="4-4-4-4">4-4-4-4</option>
+						<option value="5-5-5">5-5-5</option>
+						<option value="2-4-6">2-4-6</option>
+						<option value="7-4-8">7-4-8</option>
+						<option value="custom">Custom</option>
+					</select>
+				</div>
+				<div id="customPatternControls" style="display: none;">
+					<input type="number" id="inhaleTime" placeholder="Inhale" min="1" max="10" style="width: 60px;">
+					<input type="number" id="hold1Time" placeholder="Hold 1" min="0" max="10" style="width: 60px;">
+					<input type="number" id="exhaleTime" placeholder="Exhale" min="1" max="10" style="width: 60px;">
+					<input type="number" id="hold2Time" placeholder="Hold 2" min="0" max="10" style="width: 60px;">
+				</div>
+				<div class="setting">
                     <label for="darkModeToggle">Dark Mode</label>
                     <input type="checkbox" id="darkModeToggle" class="styled-checkbox">
                 </div>
@@ -41,6 +58,14 @@
                     <label for="notificationInterval">Notifications (hours)</label>
                     <input type="number" id="notificationInterval" min="1" max="24" value="1">
                 </div>
+				<div class="setting">
+					<label for="hapticFeedback">Haptic Feedback</label>
+					<input type="checkbox" id="hapticFeedback">
+				</div>
+				<div class="setting">
+					<label for="soundCues">Sound Cues</label>
+					<input type="checkbox" id="soundCues">
+				</div>
                 <div class="support-us">
                     <h4 id="donateToggle">Donate</h4>
                     <div id="donateContent" style="display: none;">
